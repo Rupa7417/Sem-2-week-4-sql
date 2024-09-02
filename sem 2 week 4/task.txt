@@ -1,0 +1,139 @@
+-- task 1: 
+create table employees (
+    employeeid int primary key,
+    firstname varchar(10),
+    lastname varchar(10),
+    dateofbirth date,
+    department varchar(10)
+);
+
+-- task 2: 
+create table orders (
+    orderid int primary key,
+    orderdate date,
+    customerid int,
+    amount decimal(10, 2)
+);
+
+-- task 3: 
+insert into employees (employeeid, firstname, lastname, dateofbirth, department) 
+values (1, 'alice', 'johnson', '1990-01-15', 'hr');
+
+select * from employees;
+
+-- task 4: 
+insert into orders (orderid, orderdate, customerid, amount) values 
+(1, '2024-08-01', 101, 250.00),
+(2, '2024-08-02', 102, 550.00),
+(3, '2024-08-03', 103, 600.00),
+(4, '2024-08-04', 104, 650.00);
+
+-- task 5: 
+select * from employees;
+
+-- task 6: 
+select * from orders;
+
+-- task 7:
+select firstname, lastname from employees;
+
+-- task 8:
+select orderid, amount from orders;
+
+-- task 9: 
+update employees 
+set department = 'finance' 
+where employeeid = 1;
+select * from employees;
+
+-- task 10: 
+update orders 
+set amount = 500.00 
+where orderid = 2;
+select * from employees;
+
+-- task 11: 
+delete from employees 
+where employeeid = 1;
+
+-- task 12: 
+delete from orders 
+where amount < 100;
+
+-- task 13: 
+select * from employees 
+where department = 'hr';
+
+-- task 14: 
+select * from orders 
+where amount > 300;
+
+-- task 15: 
+select * from employees 
+where department = 'hr' 
+and dateofbirth > '1990-01-01';
+
+-- task 16: 
+select * from orders 
+where amount > 300 
+and orderdate < '2023-01-01';
+
+-- task 17: 
+select * from employees 
+where department = 'hr' 
+or department = 'finance';
+
+-- task 18: 
+select * from orders 
+where amount < 100 
+or orderdate > '2023-01-01';
+
+-- task 19: 
+select * from employees 
+order by lastname asc;
+
+-- task 20:
+select * from orders 
+order by amount desc;
+
+-- task 21: 
+select count(*) from employees;
+
+-- task 22: 
+select count(*) from orders;
+
+-- task 23: 
+select avg(amount) from orders;
+
+-- task 24: 
+select avg(year(current_date) - year(dateofbirth)) as avg_age from employees;
+
+-- task 25: 
+select department, count(*) from employees 
+group by department;
+
+-- task 26: 
+select customerid, sum(amount) from orders 
+group by customerid;
+
+-- task 27: 
+select department from employees 
+group by department 
+having count(*) > 5;
+
+-- task 28: 
+select customerid from orders 
+group by customerid 
+having sum(amount) > 1000;
+
+-- task 29:
+select e.firstname, e.lastname, o.amount 
+from employees e 
+left join orders o 
+on e.employeeid = o.customerid;
+
+-- task 30: 
+select e.employeeid, e.firstname, e.lastname, o.amount 
+from employees e 
+left join orders o 
+on e.employeeid = o.customerid;

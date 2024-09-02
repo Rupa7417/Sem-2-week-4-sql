@@ -1,0 +1,112 @@
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    major VARCHAR(50),
+    department_id INT,
+    graduation_year YEAR
+);
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100),
+    department_id INT
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+
+CREATE TABLE Instructors (
+    instructor_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department_id INT
+);
+
+CREATE TABLE Departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(100)
+);
+
+-- Insert data into Departments
+INSERT INTO Departments (department_id, department_name) VALUES
+(1, 'Computer Science'),
+(2, 'Mathematics'),
+(3, 'Physics');
+
+-- Insert data into Students
+INSERT INTO Students (student_id, first_name, last_name, major, department_id, graduation_year) VALUES
+(1, 'John', 'Doe', 'Computer Science', 1, 2025),
+(2, 'Jane', 'Smith', 'Mathematics', 2, 2024);
+
+-- Insert data into Courses
+INSERT INTO Courses (course_id, course_name, department_id) VALUES
+(1, 'Algorithms', 1),
+(2, 'Linear Algebra', 2),
+(3, 'Quantum Mechanics', 3);
+
+-- Insert data into Instructors
+INSERT INTO Instructors (instructor_id, first_name, last_name, department_id) VALUES
+(1, 'Alice', 'Johnson', 1),
+(2, 'Bob', 'Williams', 2);
+
+-- Insert data into Enrollments
+INSERT INTO Enrollments (enrollment_id, student_id, course_id, enrollment_date) VALUES
+(1, 1, 1, '2024-01-15'),
+(2, 2, 2, '2024-01-16');
+
+--Select All Courses Offered by a Specific Department
+SELECT course_name 
+FROM Courses 
+WHERE department_id = 1;  -- Replace 1 with the specific department_id
+
+--Update a Student's Major or Department
+UPDATE Students 
+SET major = 'Physics', department_id = 3 
+WHERE student_id = 1;
+
+--Delete Records of Students Who Have Graduated
+DELETE FROM Students 
+WHERE graduation_year <= 2023;
+--Filter Students Enrolled in a Specific Course
+SELECT s.student_id, s.first_name, s.last_name 
+FROM Students s
+JOIN Enrollments e ON s.student_id = e.student_id
+WHERE e.course_id = 1;  -- Replace 1 with the specific course_id
+
+--Use AND/OR to Find Students Enrolled in Multiple Courses
+SELECT s.student_id, s.first_name, s.last_name 
+FROM Students s
+JOIN Enrollments e ON s.student_id = e.student_id
+WHERE e.course_id = 1 OR e.course_id = 2;  -- Adjust course_ids as needed
+
+--Sort Courses by the Number of Enrolled Students
+SELECT c.course_name, COUNT(e.student_id) AS student_count
+FROM Courses c
+LEFT JOIN Enrollments e ON c.course_id = e.course_id
+GROUP BY c.course_name
+ORDER BY student_count DESC;
+--Count the Total Number of Students in Each Course
+SELECT c.course_name, COUNT(e.student_id) AS student_count
+FROM Courses c
+LEFT JOIN Enrollments e ON c.course_id = e.course_id
+GROUP BY c.course_name;
+
+
+--Group Courses by Department and Find the Average Enrollment Per Course
+SELECT d.department_name, AVG(course_count) AS avg_enrollment
+FROM (
+    SELECT c.department_id, COUNT(e.student_id) AS course_count
+    FROM Courses c
+    LEFT JOIN Enrollments e ON c.course_id = e.course_id
+    GROUP BY c.course_id
+) AS CourseCounts
+JOIN Departments d ON CourseCounts.department_id = d.department_id
+GROUP BY d.department_name;
+
